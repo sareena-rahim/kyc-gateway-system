@@ -13,12 +13,6 @@ from gateway.db import Base
 
 
 class ClientMaster(Base):
-    """
-    Registered banks and NBFCs.
-    Every request must include a valid api_key
-    that exists in this table.
-    """
-
     __tablename__ = "client_master"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -29,11 +23,6 @@ class ClientMaster(Base):
 
 
 class APIMaster(Base):
-    """
-    The brain of the system.
-    Stores how to call each vendor for each service.
-    """
-
     __tablename__ = "api_master"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -49,11 +38,6 @@ class APIMaster(Base):
 
 
 class ServicesMaster(Base):
-    """
-    Registry of supported services.
-    Used to validate service_code before routing.
-    """
-
     __tablename__ = "services_master"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -64,11 +48,6 @@ class ServicesMaster(Base):
 
 
 class ClientCredits(Base):
-    """
-    Current credit balance per client.
-    One row per client.
-    """
-
     __tablename__ = "client_credits"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -86,10 +65,6 @@ class ClientCredits(Base):
 
 
 class ClientCreditsLedger(Base):
-    """
-    Immutable history of every credit change.
-    """
-
     __tablename__ = "client_credits_ledger"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -106,10 +81,6 @@ class ClientCreditsLedger(Base):
 
 
 class AuditLog(Base):
-    """
-    Full immutable record of every API transaction.
-    """
-
     __tablename__ = "audit_log"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
