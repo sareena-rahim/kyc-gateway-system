@@ -1,5 +1,3 @@
-import json
-import uuid
 import requests
 from datetime import datetime
 
@@ -50,3 +48,23 @@ def call_vendor(endpoint_url, http_method, headers, payload):
 
     except requests.exceptions.HTTPError as e:
         raise Exception(f"Vendor returned error: {str(e)}")
+
+
+def mask_aadhaar(value):
+    digits = value.replace(" ", "")
+    masked = "XXXX XXXX " + digits[-4:]
+    return masked
+
+
+def mask_pan(value):
+    masked = value[:2] + "XXX" + value[5:]
+    return masked
+
+
+def mask_payload(payload):
+    masked = payload.copy()
+    if "aadhaar_number" in masked:
+        masked["aadhaar_number"] = mask_aadhaar(masked["aadhaar_number"])
+    if "pan_number" in masked:
+        masked["pan_number"] = mask_pan(masked["pan_number"])
+    return masked

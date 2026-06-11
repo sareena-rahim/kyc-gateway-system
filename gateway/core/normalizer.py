@@ -1,19 +1,16 @@
-def normalize_response(vendor_response, response_map):
+def get_value_by_path(data, path):
+    keys = path.split(".")
+    current = data
+    for key in keys:
+        if isinstance(current, dict) and key in current:
+            current = current[key]
+        else:
+            return None
+    return current
+
+
+def normalize_response(raw_vendor_response, response_map):
     result = {}
-    for standard_key, vendor_key in response_map.items():
-        result[standard_key] = vendor_response.get(vendor_key)
+    for our_field, vendor_path in response_map.items():
+        result[our_field] = get_value_by_path(raw_vendor_response, vendor_path)
     return result
-
-
-def parse_verified_flag(normalized):
-    status_value = normalized.get("verified")
-
-    if isinstance(status_value, bool):
-        return normalized
-
-    if isinstance(status_value, str):
-        normalized["verified"] = status_value.upper() in (
-            "VALID", "ACTIVE", "TRUE", "YES", "SUCCESS", "1"
-        )
-
-    return normalized
