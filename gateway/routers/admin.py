@@ -1,0 +1,94 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from gateway.db import get_db
+from gateway.models import ClientMaster, ServicesMaster, APIMaster, ClientCredits, ClientCreditsLedger
+from gateway.schemas import (
+    CreateClientRequest, CreateServiceRequest, CreateAPIConfigRequest,
+    TopupRequest, ClientResponse, ServiceResponse, TopupResponse
+)
+import json
+import secrets
+
+router = APIRouter(prefix="/admin", tags=["Admin"])
+
+
+@router.post("/clients", response_model=ClientResponse)
+def create_client(request: CreateClientRequest, db: Session = Depends(get_db)):
+    existing = db.query(ClientMaster).filter_by(api_key=request.api_key).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="API key already exists")
+
+    client = ClientMaster(name=request.name, api_key=request.api_key)
+    db.add(client)
+    db.commit()
+    db.refresh(client)
+
+    credits = ClientCredits(client_id=client.id, balance=0)
+    db.add(credits)
+    db.commit()
+
+    return client
+
+
+@router.post("/services", response_model=ServiceResponse)
+def create_service(request: CreateServiceRequest, db: Session = Depends(get_db)):
+    existing = db.query(ServicesMaster).filter_by(service_code=request.service_code).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Service already exists")
+
+    service = ServicesMaster(
+        service_code=request.service_code,
+        display_name=request.display_name
+    )
+    db.add(service)
+    db.commit()
+    db.refresh(service)
+
+    return service
+
+
+@router.post("/api-config")
+def create_api_config(request: CreateAPIConfigRequest, db: Session = Depends(get_db)):
+    config = APIMaster(
+        service_code=request.service_code,
+        vendor_name=request.vendor_name,
+        endpoint_url=request.endpoint_url,
+        http_method=request.http_method,
+        headers_template=json.dumps(request.headers_template),
+        payload_template=json.dumps(request.payload_template),
+        response_map=json.dumps(request.response_map)
+    )
+    db.add(config)
+    db.commit()
+    db.refresh(config)
+
+    return {"message": "API config created successfully", "id": config.id}
+
+
+@router.post("/clients/topup", response_model=TopupResponse)
+def topup_credits(request: TopupRequest, db: Session = Depends(get_db)):
+    client = db.query(ClientMaster).filter_by(api_key=request.api_key, is_active=True).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    credits = db.query(ClientCredits).filter_by(client_id=client.id).first()
+    if not credits:
+        raise HTTPException(status_code=404, detail="Credits record not found")
+
+    credits.balance += request.amount
+
+    ledger = ClientCreditsLedger(
+        client_id=client.id,
+        transaction_type="TOPUP",
+        amount=request.amount,
+        balance_after=credits.balance,
+        reference_txn_id=secrets.token_hex(8)
+    )
+    db.add(ledger)
+    db.commit()
+
+    return TopupResponse(
+        client=client.name,
+        amount=request.amount,
+        new_balance=credits.balance
+    )
