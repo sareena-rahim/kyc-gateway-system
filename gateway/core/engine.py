@@ -1,65 +1,75 @@
-import httpx
+# gateway/core/engine.py
+
 import json
-from sqlalchemy.orm import Session
-from gateway.models import APIMaster
+import os
+import httpx
+from fastapi import HTTPException
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-def get_api_config(service_code: str, db: Session) -> APIMaster:
-    """
-    Reads the api_master table to get vendor config for the given service.
-    """
-    config = db.query(APIMaster).filter_by(
-        service_code=service_code,
-        is_active=True
-    ).first()
+def fill_template(template: dict, client_payload: dict) -> dict:
 
-    if not config:
-        raise Exception(f"No active config found for service: {service_code}")
-
-    return config
-
-
-def fill_template(template: dict, payload: dict) -> dict:
-    """
-    Fills {{placeholder}} values in the template with actual values.
-    Example: {"pancard": "{{pan_number}}"} + {"pan_number": "CGQPN5366Q"}
-             = {"pancard": "CGQPN5366Q"}
-    """
     filled = {}
     for key, value in template.items():
-        if isinstance(value, str) and value.startswith("{{") and value.endswith("}}"):
-            placeholder = value[2:-2]  # removes {{ and }}
-            filled[key] = payload.get(placeholder, value)
+        if isinstance(value, str) and "{{" in value:
+            field_name = value.replace("{{", "").replace("}}", "").strip()
+            filled[key] = client_payload.get(field_name)
         else:
             filled[key] = value
     return filled
 
 
-def call_vendor(config: APIMaster, payload: dict) -> dict:
-    """
-    Builds and sends the HTTP request to the vendor.
-    Reads everything from api_master config — nothing hardcoded.
-    """
-    # Parse templates from database
-    headers = json.loads(config.headers_template) if config.headers_template else {}
-    payload_template = json.loads(config.payload_template) if config.payload_template else {}
+def fill_headers(headers_template: dict) -> dict:
 
-    # Fill placeholders with actual values
-    filled_payload = fill_template(payload_template, payload)
+    filled = {}
+    for key, value in headers_template.items():
+        if isinstance(value, str) and "{{" in value:
+            env_key = value.replace("{{", "").replace("}}", "").strip()
+            filled[key] = os.getenv(env_key, value)
+        else:
+            filled[key] = value
+    return filled
 
-    # Make the HTTP request
-    with httpx.Client(timeout=30) as client:
-        if config.http_method.upper() == "POST":
-            response = client.post(
-                config.endpoint_url,
-                headers=headers,
-                json=filled_payload
+
+def build_and_call_vendor(api_config, client_payload: dict):
+
+
+    # Build headers
+    headers = {}
+    if api_config.headers_template:
+        try:
+            headers_template = json.loads(api_config.headers_template)
+            headers = fill_headers(headers_template)
+        except json.JSONDecodeError:
+            raise HTTPException(
+                500,
+                "Invalid headers_template in api_master"
             )
-        elif config.http_method.upper() == "GET":
-            response = client.get(
-                config.endpoint_url,
-                headers=headers,
-                params=filled_payload
-            )
 
-    return response.json()
+    # Build payload
+    try:
+        template = json.loads(api_config.payload_template)
+    except json.JSONDecodeError:
+        raise HTTPException(
+            500,
+            "Invalid payload_template in api_master"
+        )
+
+    vendor_request_body = fill_template(template, client_payload)
+
+    # Call vendor
+    try:
+        response = httpx.post(
+            api_config.endpoint_url,
+            json    = vendor_request_body,
+            headers = headers,
+            timeout = 10.0
+        )
+    except httpx.TimeoutException:
+        raise HTTPException(504, "Vendor request timed out")
+    except httpx.RequestError:
+        raise HTTPException(502, "Could not reach vendor")
+
+    return vendor_request_body, response.json()
