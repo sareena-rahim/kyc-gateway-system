@@ -4,11 +4,7 @@ from gateway.models import ClientMaster
 
 
 def authenticate_client(api_key: str, db: Session) -> ClientMaster:
-    """
-    Looks up the api_key in client_master.
-    Returns the client if found and active.
-    Raises 401 if not found or inactive.
-    """
+
     if not api_key:
         raise HTTPException(
             status_code=400,
