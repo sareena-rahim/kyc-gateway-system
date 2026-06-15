@@ -1,13 +1,15 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from dotenv import load_dotenv
-import os
+from sqlalchemy.engine.url import URL
 
-load_dotenv()
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-engine = create_engine(DATABASE_URL)
+engine = create_engine(URL.create(
+    drivername="mysql+pymysql",
+    username="root",
+    password="Anusha@116",
+    host="192.168.0.173",
+    port=3306,
+    database="kyc_gateway_system"
+))
 
 SessionLocal = sessionmaker(
     autocommit=False,

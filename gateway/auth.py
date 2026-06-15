@@ -4,7 +4,6 @@ from gateway.models import ClientMaster
 
 
 def authenticate_client(api_key: str, db: Session) -> ClientMaster:
-
     if not api_key:
         raise HTTPException(
             status_code=400,

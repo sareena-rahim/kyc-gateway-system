@@ -1,10 +1,10 @@
-# gateway/schemas.py
+
 
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 
 
-# ── Admin Request Schemas ─────────────────────────
+
 
 class CreateServiceRequest(BaseModel):
     service_code: str
@@ -31,7 +31,7 @@ class TopupRequest(BaseModel):
     amount:  int
 
 
-# ── Admin Response Schemas ────────────────────────
+
 
 class ServiceResponse(BaseModel):
     id:           int
@@ -59,7 +59,7 @@ class TopupResponse(BaseModel):
     new_balance: int
 
 
-# ── Bank Request Schema ───────────────────────────
+
 
 class KYCRequest(BaseModel):
     client_api_key: str
@@ -78,7 +78,7 @@ class KYCRequest(BaseModel):
         }
 
 
-# ── Bank Response Schemas ─────────────────────────
+
 
 class KYCResult(BaseModel):
     verified:       Optional[bool] = None
