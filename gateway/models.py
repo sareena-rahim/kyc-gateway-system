@@ -13,8 +13,6 @@ from gateway.db import Base
 
 
 class ClientMaster(Base):
-    
-
     __tablename__ = "client_master"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -25,8 +23,6 @@ class ClientMaster(Base):
 
 
 class APIMaster(Base):
-    
-
     __tablename__ = "api_master"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -42,8 +38,6 @@ class APIMaster(Base):
 
 
 class ServicesMaster(Base):
-   
-
     __tablename__ = "services_master"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -54,8 +48,6 @@ class ServicesMaster(Base):
 
 
 class ClientCredits(Base):
-   
-
     __tablename__ = "client_credits"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -73,8 +65,6 @@ class ClientCredits(Base):
 
 
 class ClientCreditsLedger(Base):
-    
-
     __tablename__ = "client_credits_ledger"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -91,8 +81,6 @@ class ClientCreditsLedger(Base):
 
 
 class AuditLog(Base):
-   
-
     __tablename__ = "audit_log"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
