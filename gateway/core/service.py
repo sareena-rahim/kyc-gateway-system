@@ -80,6 +80,7 @@ def process_kyc_request(client, service_code: str, payload: dict, db: Session):
             raise HTTPException(500, "Invalid response_map in api_master")
 
         normalized = normalize_response(vendor_response, field_map)
+        print("Done")
 
         credits.balance -= 1
 
@@ -108,7 +109,9 @@ def process_kyc_request(client, service_code: str, payload: dict, db: Session):
             "credits_before":    balance_before,
             "credits_remaining": credits.balance,
             "result":            normalized
+
         }
+        print(f'Normalized Response:',Normalized)
 
     except HTTPException as e:
         audit.status = "FAILED"

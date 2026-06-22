@@ -14,11 +14,22 @@ router = APIRouter(prefix="/admin", tags=["Admin"])
 
 @router.post("/clients", response_model=ClientResponse)
 def create_client(request: CreateClientRequest, db: Session = Depends(get_db)):
-    existing = db.query(ClientMaster).filter_by(api_key=request.api_key).first()
+    existing = db.query(ClientMaster).filter_by(username=request.username).first()
     if existing:
-        raise HTTPException(status_code=400, detail="API key already exists")
+        raise HTTPException(status_code=400, detail="Username already exists")
 
-    client = ClientMaster(name=request.name, api_key=request.api_key)
+    # Auto generate API key
+    api_key = request.api_key or secrets.token_hex(16)
+
+    import hashlib
+    password_hash = hashlib.sha256(request.password.encode()).hexdigest()
+
+    client = ClientMaster(
+        name=request.name,
+        username=request.username,
+        password_hash=password_hash,
+        api_key=api_key
+    )
     db.add(client)
     db.commit()
     db.refresh(client)
@@ -92,3 +103,19 @@ def topup_credits(request: TopupRequest, db: Session = Depends(get_db)):
         amount=request.amount,
         new_balance=credits.balance
     )
+
+
+@router.get("/clients")
+def get_all_clients(db: Session = Depends(get_db)):
+    clients = db.query(ClientMaster).all()
+    result = []
+    for client in clients:
+        credits = db.query(ClientCredits).filter_by(client_id=client.id).first()
+        result.append({
+            "id": client.id,
+            "name": client.name,
+            "api_key": client.api_key,
+            "is_active": client.is_active,
+            "balance": credits.balance if credits else 0
+        })
+    return result
