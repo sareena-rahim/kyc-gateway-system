@@ -20,6 +20,7 @@ class ClientMaster(Base):
     api_key = Column(String(100), unique=True, nullable=False)
     is_active = Column(Boolean, default=True)
     is_subscribed = Column(Boolean, default=False)
+    api_key = Column(String(100), unique=True, nullable=True)
     subscription_plan = Column(String(50), nullable=True) # BASIC, STANDARD, PREMIUM
     created_at = Column(DateTime, default=datetime.utcnow)
 
