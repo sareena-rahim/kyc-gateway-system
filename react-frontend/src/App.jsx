@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
 import Dashboard from "./pages/Dashboard";
 import Services from "./pages/Services";
+import Subscriptions from "./pages/Subscriptions";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/subscriptions" element={<Subscriptions />} />
       </Routes>
     </BrowserRouter>
   );
