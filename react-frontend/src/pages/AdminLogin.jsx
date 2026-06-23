@@ -1,20 +1,21 @@
 import "./AdminLogin.css";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  FaShieldAlt,
-  FaUser,
-  FaLock,
-  FaArrowLeft,
-} from "react-icons/fa";
+import { FaShieldAlt, FaUser, FaLock, FaArrowLeft } from "react-icons/fa";
 
 function AdminLogin() {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const username = e.target[0].value;
+    const password = e.target[1].value;
 
-    // Add admin authentication later
-    navigate("/dashboard");
+    if (username === "admin" && password === "admin123") {
+      localStorage.setItem("isAdmin", "true");
+      navigate("/dashboard");
+    } else {
+      alert("Invalid admin credentials");
+    }
   };
 
   return (
@@ -25,44 +26,28 @@ function AdminLogin() {
             <div className="logo">
               <FaShieldAlt />
             </div>
-
             <h1>KYC Gateway</h1>
           </Link>
 
-          <p className="subtitle">
-            Secure access to the Admin Panel
-          </p>
+          <p className="subtitle">Secure access to the Admin Panel</p>
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
               <FaUser />
-              <input
-                type="text"
-                placeholder="Username or Email"
-                required
-              />
+              <input type="text" placeholder="Username or Email" required />
             </div>
 
             <div className="input-group">
               <FaLock />
-              <input
-                type="password"
-                placeholder="Password"
-                required
-              />
+              <input type="password" placeholder="Password" required />
             </div>
 
             <div className="options">
-              <label>
-                <input type="checkbox" /> Remember me
-              </label>
-
+              <label><input type="checkbox" /> Remember me</label>
               <a href="#">Forgot password?</a>
             </div>
 
-            <button type="submit" className="login-btn">
-              Sign In
-            </button>
+            <button type="submit" className="login-btn">Sign In</button>
 
             <Link to="/" className="back-btn">
               <FaArrowLeft />
@@ -71,8 +56,7 @@ function AdminLogin() {
           </form>
 
           <p className="footer-text">
-            Secure verification platform for
-            <span> Banks & NBFCs</span>
+            Secure verification platform for <span>Banks & NBFCs</span>
           </p>
         </div>
       </div>
