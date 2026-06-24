@@ -21,6 +21,7 @@
 }
 
 .navbar {
+<<<<<<< HEAD
   background: #1a1a2e;
   height: 64px;
 
@@ -35,6 +36,15 @@
   z-index: 100;
 
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+=======
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+>>>>>>> 3ab4fa65f6603bc0b30e610f3950ffb497d0e6c3
 }
 
 .brand {

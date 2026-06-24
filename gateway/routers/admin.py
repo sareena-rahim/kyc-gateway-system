@@ -25,11 +25,12 @@ def create_client(request: CreateClientRequest, db: Session = Depends(get_db)):
     password_hash = hashlib.sha256(request.password.encode()).hexdigest()
 
     client = ClientMaster(
-        name=request.name,
-        username=request.username,
-        password_hash=password_hash,
-        api_key=api_key
-    )
+    name=request.name,
+    username=request.username,
+    password_hash=password_hash,
+    api_key=api_key,
+    subscription_plan=request.subscription_plan
+)
     db.add(client)
     db.commit()
     db.refresh(client)
@@ -112,10 +113,12 @@ def get_all_clients(db: Session = Depends(get_db)):
     for client in clients:
         credits = db.query(ClientCredits).filter_by(client_id=client.id).first()
         result.append({
-            "id": client.id,
-            "name": client.name,
-            "api_key": client.api_key,
-            "is_active": client.is_active,
-            "balance": credits.balance if credits else 0
-        })
+    "id": client.id,
+    "name": client.name,
+    "username": client.username,
+    "api_key": client.api_key,
+    "is_active": client.is_active,
+    "subscription_plan": client.subscription_plan,
+    "balance": credits.balance if credits else 0
+})
     return result

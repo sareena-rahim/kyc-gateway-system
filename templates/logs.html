@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KYC Gateway - Logs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Inter, sans-serif; background: #F3F4F6; color: #111827; }
+        .navbar {
+            background: #2563EB; color: white;
+            padding: 16px 32px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .navbar h1 { font-size: 20px; font-weight: 700; }
+        .nav-links a {
+            color: white; text-decoration: none;
+            margin-left: 24px; font-size: 14px;
+        }
+        .nav-links a:hover { text-decoration: underline; }
+        .container { padding: 32px; }
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+        .search-box {
+            background: white; border-radius: 12px;
+            padding: 24px; margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex; gap: 12px; align-items: flex-end;
+        }
+        .form-group { flex: 1; }
+        .form-group label { display: block; font-size: 13px; color: #6B7280; margin-bottom: 6px; }
+        .form-group input {
+            width: 100%; padding: 10px 14px;
+            border: 1px solid #D1D5DB; border-radius: 8px;
+            font-size: 14px; outline: none;
+        }
+        .form-group input:focus { border-color: #2563EB; }
+        .btn {
+            padding: 10px 24px;
+            background: #2563EB; color: white;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer; white-space: nowrap;
+        }
+        .btn:hover { background: #1D4ED8; }
+        .table-box {
+            background: white; border-radius: 12px;
+            padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .table-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 16px;
+        }
+        .table-header h2 { font-size: 16px; font-weight: 600; }
+        .total { font-size: 13px; color: #6B7280; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left; font-size: 12px;
+            color: #6B7280; padding: 10px 16px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #F3F4F6; }
+        .badge { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+        .badge-green { background: #D1FAE5; color: #065F46; }
+        .badge-red { background: #FEE2E2; color: #991B1B; }
+        .badge-gray { background: #F3F4F6; color: #6B7280; }
+        .message {
+            padding: 12px 16px; border-radius: 8px;
+            font-size: 14px; margin-top: 12px;
+        }
+        .message.error { background: #FEE2E2; color: #991B1B; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <h1>KYC Gateway</h1>
+    <div class="nav-links">
+        <a href="client_dashboard.html">Clients</a>
+        <a href="logs.html">Logs</a>
+    </div>
+</nav>
+
+<div class="container">
+    <p class="page-title">Transaction Logs</p>
+
+    <!-- Search -->
+    <div class="search-box">
+        <div class="form-group">
+            <label>Client API Key</label>
+            <input type="text" id="search-apikey" placeholder="e.g. test-key-123" />
+        </div>
+        <button class="btn" id="search-btn" onclick="searchLogs()">Search Logs</button>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="table-box">
+        <div class="table-header">
+            <h2>Transaction History</h2>
+            <span class="total" id="total-logs"></span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="logs-table">
+                <tr><td colspan="5" style="text-align:center; color:#6B7280;">Enter an API key and click Search</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const BASE_URL = "http://127.0.0.1:8001";
+
+    async function searchLogs() {
+        const api_key = document.getElementById("search-apikey").value;
+        const btn = document.getElementById("search-btn");
+        const tbody = document.getElementById("logs-table");
+
+        if (!api_key) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#991B1B;">Please enter an API key!</td></tr>`;
+            return;
+        }
+
+        btn.textContent = "Searching...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${BASE_URL}/api/kyc/logs?client_api_key=${api_key}`);
+            const data = await res.json();
+
+            if (!res.ok) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#991B1B;">❌ ${data.detail}</td></tr>`;
+                document.getElementById("total-logs").textContent = "";
+                return;
+            }
+
+            document.getElementById("total-logs").textContent = `Total: ${data.total} transactions`;
+
+            if (data.total === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#6B7280;">No transactions found for this client</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = data.logs.map(log => `
+                <tr>
+                    <td><code style="font-size:12px;">${log.transaction_id}</code></td>
+                    <td>${data.client}</td>
+                    <td>${log.service}</td>
+                    <td><span class="badge ${log.status === 'SUCCESS' ? 'badge-green' : log.status === 'FAILED' ? 'badge-red' : 'badge-gray'}">${log.status}</span></td>
+                    <td>${log.created_at}</td>
+                </tr>
+            `).join("");
+
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#991B1B;">❌ Could not connect to server!</td></tr>`;
+        } finally {
+            btn.textContent = "Search Logs";
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>

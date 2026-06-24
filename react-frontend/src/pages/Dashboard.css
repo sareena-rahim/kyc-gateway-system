@@ -17,6 +17,7 @@
 }
 
 .navbar {
+<<<<<<< HEAD
   background: #1a1a2e;
   height: 64px;
 
@@ -48,11 +49,43 @@
 .logout-btn:hover {
   background: #4f8ef7;
   color: #fff;
+=======
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+
+  padding: 10px 18px;
+
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+>>>>>>> 3ab4fa65f6603bc0b30e610f3950ffb497d0e6c3
 }
 
 .brand {
   display: flex;
   align-items: center;
+<<<<<<< HEAD
   gap: 10px;
   color: #fff;
   text-decoration: none;
@@ -68,6 +101,20 @@
 .brand h2 {
   font-size: 1.2rem;
   font-weight: 700;
+=======
+  gap: 12px;
+  text-decoration: none;
+  color: white;
+}
+
+.brand svg {
+  font-size: 28px;
+  color: white;
+}
+
+.brand h2 {
+  font-size: 30px;
+>>>>>>> 3ab4fa65f6603bc0b30e610f3950ffb497d0e6c3
   color: white;
 }
 
@@ -77,6 +124,7 @@
 }
 
 .nav-links a {
+<<<<<<< HEAD
   color: #adb5bd;
   text-decoration: none;
   font-weight: 500;
@@ -84,12 +132,22 @@
   padding: 4px 0;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
+=======
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+>>>>>>> 3ab4fa65f6603bc0b30e610f3950ffb497d0e6c3
 }
 
 .nav-links a.active,
 .nav-links a:hover {
+<<<<<<< HEAD
   color: #fff;
   border-bottom-color: #4f8ef7;
+=======
+  color: white;
+>>>>>>> 3ab4fa65f6603bc0b30e610f3950ffb497d0e6c3
 }
 
 .admin-profile {
@@ -100,15 +158,24 @@
 }
 
 .avatar {
+<<<<<<< HEAD
   width: 34px;
   height: 34px;
   background: #4f8ef7;
+=======
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.2);
+>>>>>>> 3ab4fa65f6603bc0b30e610f3950ffb497d0e6c3
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: 700;
+<<<<<<< HEAD
   color: #fff;
+=======
+>>>>>>> 3ab4fa65f6603bc0b30e610f3950ffb497d0e6c3
 }
 
 .container {

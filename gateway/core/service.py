@@ -1,9 +1,11 @@
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+
 
 from gateway.models import (
     ClientCredits,
@@ -30,8 +32,7 @@ def process_kyc_request(client, service_code: str, payload: dict, db: Session):
         client_id       = client.id,
         service_code    = service_code,
         inbound_payload = json.dumps(masked),
-        status          = "INITIATED",
-        created_at      = datetime.utcnow()
+        status          = "INITIATED"
     )
     db.add(audit)
     db.commit()

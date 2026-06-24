@@ -5,7 +5,7 @@ from gateway import auth
 from gateway.models import ClientCredits, ClientMaster
 from gateway.schemas import BalanceResponse
 from pydantic import BaseModel
-
+import hashlib
 router = APIRouter(prefix="/api/kyc", tags=["Balance"])
 
 # Subscription plans
@@ -65,3 +65,8 @@ def subscribe(request: SubscribeRequest, db: Session = Depends(get_db)):
         "plan": request.plan.upper(),
         "credits_will_be_added": PLANS[request.plan.upper()]
     }
+
+
+
+
+       
