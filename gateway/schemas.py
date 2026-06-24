@@ -22,11 +22,11 @@ class CreateAPIConfigRequest(BaseModel):
 
 
 class CreateClientRequest(BaseModel):
-    name:     str
+    name: str
     username: str
     password: str
-    api_key:  Optional[str] = None  # auto-generated if not providedclass CreateClientRequest(BaseModel):
-    
+    api_key: Optional[str] = None
+    subscription_plan: str
 
 
 class TopupRequest(BaseModel):
