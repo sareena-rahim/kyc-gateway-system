@@ -22,8 +22,11 @@ class CreateAPIConfigRequest(BaseModel):
 
 
 class CreateClientRequest(BaseModel):
-    name:    str
-    api_key: str
+    name: str
+    username: str
+    password: str
+    api_key: Optional[str] = None
+    subscription_plan: str
 
 
 class TopupRequest(BaseModel):
@@ -46,7 +49,8 @@ class ServiceResponse(BaseModel):
 class ClientResponse(BaseModel):
     id:        int
     name:      str
-    api_key:   str
+    username:  str
+    api_key:   Optional[str]
     is_active: bool
 
     class Config:

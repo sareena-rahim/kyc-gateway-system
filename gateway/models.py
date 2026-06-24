@@ -17,9 +17,14 @@ class ClientMaster(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(100), nullable=False)
-    api_key = Column(String(100), unique=True, nullable=False)
+    username = Column(String(100), unique=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    api_key = Column(String(100), unique=True, nullable=True)
     is_active = Column(Boolean, default=True)
+    is_subscribed = Column(Boolean, default=False)
+    subscription_plan = Column(String(50), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
 
 
 class APIMaster(Base):

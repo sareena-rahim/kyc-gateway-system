@@ -1,9 +1,11 @@
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+
 
 from gateway.models import (
     ClientCredits,
@@ -30,8 +32,7 @@ def process_kyc_request(client, service_code: str, payload: dict, db: Session):
         client_id       = client.id,
         service_code    = service_code,
         inbound_payload = json.dumps(masked),
-        status          = "INITIATED",
-        created_at      = datetime.utcnow()
+        status          = "INITIATED"
     )
     db.add(audit)
     db.commit()
@@ -80,6 +81,7 @@ def process_kyc_request(client, service_code: str, payload: dict, db: Session):
             raise HTTPException(500, "Invalid response_map in api_master")
 
         normalized = normalize_response(vendor_response, field_map)
+        print("Done")
 
         credits.balance -= 1
 
@@ -108,7 +110,9 @@ def process_kyc_request(client, service_code: str, payload: dict, db: Session):
             "credits_before":    balance_before,
             "credits_remaining": credits.balance,
             "result":            normalized
+
         }
+        print(f'Normalized Response:',Normalized)
 
     except HTTPException as e:
         audit.status = "FAILED"
