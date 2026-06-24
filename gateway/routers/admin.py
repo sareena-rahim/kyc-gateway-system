@@ -122,3 +122,32 @@ def get_all_clients(db: Session = Depends(get_db)):
     "balance": credits.balance if credits else 0
 })
     return result
+
+@router.get("/stats")
+def get_stats(db: Session = Depends(get_db)):
+    total_clients = db.query(ClientMaster).count()
+    total_services = db.query(ServicesMaster).count()
+    total_credits_used = db.query(ClientCreditsLedger).count()
+    return {
+        "total_clients": total_clients,
+        "total_services": total_services,
+        "total_credits_used": total_credits_used
+    }
+
+@router.post("/clients/{client_id}/regenerate-key")
+def regenerate_key(client_id: int, db: Session = Depends(get_db)):
+    client = db.query(ClientMaster).filter_by(id=client_id).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    client.api_key = secrets.token_hex(16)
+    db.commit()
+    return {"new_api_key": client.api_key}
+
+@router.post("/clients/{client_id}/revoke-key")
+def revoke_key(client_id: int, db: Session = Depends(get_db)):
+    client = db.query(ClientMaster).filter_by(id=client_id).first()
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+    client.is_active = False
+    db.commit()
+    return {"success": True}
