@@ -98,6 +98,13 @@ function Login() {
               <button type="submit" className="login-btn">
                 Sign In
               </button>
+              <p className="signup-note">
+                Don't have an account?<br /> 
+                <span>
+                  Contact admin at
+                  <a href="mailto:admin@kycgateway.com"> admin@kycgateway.com</a>
+                  </span></p>
+              
 
               <div className="divider">
                 <span>OR</span>

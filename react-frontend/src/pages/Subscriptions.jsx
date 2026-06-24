@@ -57,8 +57,10 @@ function Subscriptions() {
         </Link>
         <div className="nav-links">
           <Link to="/dashboard">Dashboard</Link>
+          <Link to="/clients">Clients</Link>
           <Link to="/services">Services</Link>
           <Link to="/subscriptions" className="active">Subscriptions</Link>
+          <Link to="/api-keys">API Keys</Link>
         </div>
         <div className="admin-profile">
           <FaBell />
