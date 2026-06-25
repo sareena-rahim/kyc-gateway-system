@@ -1,14 +1,14 @@
 import "./APIKeys.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaShieldAlt, FaBell, FaKey, FaCopy, FaCheck, FaSync, FaBan } from "react-icons/fa";
+import { FaShieldAlt, FaBell, /*FaKey, FaCopy, FaCheck,*/ FaSync, FaBan } from "react-icons/fa";
 
 const API = "http://127.0.0.1:8000";
 
 function APIKeys() {
   const navigate = useNavigate();
   const [clients, setClients] = useState([]);
-  const [copied, setCopied] = useState(null);
+  //const [copied, setCopied] = useState(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [loading, setLoading] = useState(true);
@@ -154,7 +154,7 @@ function APIKeys() {
                   <th>ID</th>
                   <th>Company</th>
                   <th>Plan</th>
-                  <th>API Key</th>
+               {/*   <th>API Key</th> */}
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
@@ -172,7 +172,7 @@ function APIKeys() {
                           {c.subscription_plan || "Basic"}
                         </span>
                       </td>
-                      <td>
+                    {/*}  <td>
                         <div className="api-key-cell">
                           <code className={!c.is_active ? "revoked" : ""}>
                             {c.is_active ? c.api_key : "— revoked —"}
@@ -187,7 +187,7 @@ function APIKeys() {
                             </button>
                           )}
                         </div>
-                      </td>
+                      </td>*/}
                       <td>
                         <span className={`badge ${c.is_active ? "active" : "inactive"}`}>
                           {c.is_active ? "Active" : "Revoked"}

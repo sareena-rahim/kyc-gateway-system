@@ -19,10 +19,13 @@ function Services() {
   }, []);
 
   const loadServices = () => {
-    fetch(`${API}/admin/services`)
-      .then(r => r.json())
-      .then(data => setServices(data))
-      .catch(err => console.error("Failed to fetch services:", err));
+  fetch(`${API}/api/services/`)
+    .then(r => r.json())
+    .then(data => {
+      const list = Array.isArray(data) ? data : (data.results ?? []);
+      setServices(list);
+    })
+    .catch(err => console.error("Failed to fetch services:", err));
   };
 
   const addService = () => {
@@ -32,7 +35,7 @@ function Services() {
       return;
     }
 
-    fetch(`${API}/admin/services`, {
+    fetch(`${API}/api/services`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
