@@ -1,4 +1,3 @@
-//import "./Navbar.css";
 import "./Dashboard.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -72,6 +71,28 @@ function Dashboard() {
             </div>
             <h2>{stats.total_services}</h2>
           </div>
+        </div>
+        <div className="activity-panel">
+          <h2>Recent Activity</h2>
+
+          <table className="activity-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Service</th>
+                <th>Status</th>
+                <th>Time</th>
+                </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td colSpan="4" className="empty">
+                  No recent activity
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
